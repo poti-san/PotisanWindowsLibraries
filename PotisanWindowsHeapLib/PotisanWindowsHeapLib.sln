@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PotisanWindowsHeapLib", "PotisanWindowsHeapLib\PotisanWindowsHeapLib.csproj", "{3E31D2CF-31A5-4610-AE6C-5E4BDA88457F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{DDB4EF12-CC4E-5E88-E6FC-71A802F4DE97}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "Samples\ConsoleApp1\ConsoleApp1.csproj", "{8112F1A6-E197-3BC3-9D03-E442EFDE389F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3E31D2CF-31A5-4610-AE6C-5E4BDA88457F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E31D2CF-31A5-4610-AE6C-5E4BDA88457F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E31D2CF-31A5-4610-AE6C-5E4BDA88457F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E31D2CF-31A5-4610-AE6C-5E4BDA88457F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8112F1A6-E197-3BC3-9D03-E442EFDE389F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8112F1A6-E197-3BC3-9D03-E442EFDE389F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8112F1A6-E197-3BC3-9D03-E442EFDE389F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8112F1A6-E197-3BC3-9D03-E442EFDE389F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8112F1A6-E197-3BC3-9D03-E442EFDE389F} = {DDB4EF12-CC4E-5E88-E6FC-71A802F4DE97}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6D3179E3-0DFC-4EF0-968A-961A13579930}
+	EndGlobalSection
+EndGlobal
