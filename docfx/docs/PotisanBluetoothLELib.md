@@ -65,7 +65,7 @@ foreach (var deviceInfo in deviceInfos)
 }
 ```
 
-# GATTサービスデバイスや特性を列挙する。
+### GATTサービスデバイスや特性を列挙する。
 
 ```cs
 using System.Reflection.PortableExecutable;
@@ -103,3 +103,10 @@ foreach (var serviceDeviceInfo in serviceDeviceInfos)
 	}
 }
 ```
+
+## 謝辞
+
+作成の過程で以下の情報を参照しています。ここに謝辞を申し上げます。
+
+- Bluetooth LE Explorer (Microsoft) - Microsoft Store
+- [DerekGn/WinBle - GitHub](https://github.com/DerekGn/WinBle)
