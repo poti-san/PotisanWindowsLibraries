@@ -77,7 +77,7 @@ public sealed class BluetoothLEDevice : BluetoothLEDeviceBase
 }
 
 /// <summary>
-/// BluetoothLE GATTサービスデバイス共通インターフェイス。
+/// BluetoothLE GATTサービス。デバイスとGATTサービスの共通インターフェイスでもあります。
 /// デバイスとして開かれたBluetoothLE GATTサービスデバイスとBluetoothLEデバイスから取得されたBluetoothLE GATTサービスデバイス情報をまとめます。
 /// </summary>
 public interface IBluetoothLEGattService
@@ -86,6 +86,9 @@ public interface IBluetoothLEGattService
 	ImmutableArray<BluetoothLEGattCharacteristic> Characteristics { get; }
 }
 
+/// <summary>
+/// BluetoothLE GATTサービスの機能。
+/// </summary>
 public static class IBluetoothLEGattServiceExtensions
 {
 	public static ulong BeginReliableWrite(this IBluetoothLEGattService service)

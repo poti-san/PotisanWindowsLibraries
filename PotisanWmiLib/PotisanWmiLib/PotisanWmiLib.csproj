@@ -17,6 +17,7 @@
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<AssemblyName>Potisan.Windows.Wmi</AssemblyName>
 		<TieredCompilationQuickJit>false</TieredCompilationQuickJit>
+		<AssemblyVersion>1.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

@@ -13,7 +13,7 @@ public interface IBluetoothLEDeviceCollection : IDisposable
 	SafeHandle Handle { get; }
 	ImmutableArray<IBluetoothLEDeviceInfo> Items { get; }
 
-	IEnumerable<IBluetoothLEDeviceInfo> GetDeviceEnumerable();
+	IEnumerable<IBluetoothLEDeviceInfo> GetDeviceInfoEnumerable();
 }
 
 /// <summary>
@@ -120,9 +120,9 @@ public class BluetoothLEDeviceInfoCollection :
 	}
 
 	ImmutableArray<IBluetoothLEDeviceInfo> IBluetoothLEDeviceCollection.Items => [.. Items.OfType<IBluetoothLEDeviceInfo>()];
-	public IEnumerable<IBluetoothLEDeviceInfo> GetDeviceEnumerable() => Items.OfType<IBluetoothLEDeviceInfo>();
+	public IEnumerable<IBluetoothLEDeviceInfo> GetDeviceInfoEnumerable() => Items.OfType<IBluetoothLEDeviceInfo>();
 
-	public ImmutableArray<BluetoothLEDeviceInfo> GetDevicesByServiceUuid(KnownServiceShortUuid uuid)
+	public ImmutableArray<BluetoothLEDeviceInfo> GetDeviceInfosByServiceUuid(KnownServiceShortUuid uuid)
 	{
 		var list = new List<BluetoothLEDeviceInfo>();
 		foreach (var deviceInfo in Items)
@@ -158,7 +158,7 @@ public class BluetoothLEGattServiceDeviceInfoCollection :
 	}
 
 	ImmutableArray<IBluetoothLEDeviceInfo> IBluetoothLEDeviceCollection.Items => [.. Items.OfType<IBluetoothLEDeviceInfo>()];
-	public IEnumerable<IBluetoothLEDeviceInfo> GetDeviceEnumerable() => Items.OfType<IBluetoothLEDeviceInfo>();
+	public IEnumerable<IBluetoothLEDeviceInfo> GetDeviceInfoEnumerable() => Items.OfType<IBluetoothLEDeviceInfo>();
 }
 
 file static class NativeMethods

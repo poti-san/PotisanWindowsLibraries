@@ -8,8 +8,8 @@
 !/docfx/docs/
 /docs/
 
-/Samples/ConsoleApp*/
-/Samples/WinFormsApp*/
+Samples/ConsoleApp*/
+Samples/WinFormsApp*/
 memo/*
 
 # User-specific files
