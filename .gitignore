@@ -11,6 +11,7 @@
 Samples/ConsoleApp*/
 Samples/WinFormsApp*/
 memo/*
+memos/*
 
 # User-specific files
 *.rsuser
