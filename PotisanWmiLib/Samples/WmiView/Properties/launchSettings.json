@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "WmiView": {
+      "commandName": "Project",
+      "hotReloadEnabled": false
+    }
+  }
+}

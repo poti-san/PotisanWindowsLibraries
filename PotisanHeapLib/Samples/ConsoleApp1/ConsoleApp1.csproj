@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\PotisanWindowsHeapLib\PotisanWindowsHeapLib.csproj" />
+    <ProjectReference Include="..\..\PotisanHeapLib\PotisanHeapLib.csproj" />
   </ItemGroup>
 
 </Project>
