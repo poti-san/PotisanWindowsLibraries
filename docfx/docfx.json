@@ -1,0 +1,35 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
+  "metadata": [
+    {
+      "src": [{"src": "../PotisanBluetoothLELib/PotisanBluetoothLELib", "files": ["**/*.csproj"]}],
+      "dest": "api/PotisanBluetoothLELib",
+      "disableGitFeatures": false,
+      "namespaceLayout": "flattened",
+    },
+    {
+      "src": [{"src": "../PotisanHeapLib/PotisanHeapLib", "files": ["**/*.csproj"]},],
+      "dest": "api/PotisanHeapLib",
+      "disableGitFeatures": false,
+      "namespaceLayout": "flattened",
+    },
+    {
+      "src": [{"src": "../PotisanWmiLib/PotisanWmiLib", "files": ["**/*.csproj"]},],
+      "dest": "api/PotisanWmiLib",
+      "disableGitFeatures": false,
+      "namespaceLayout": "flattened",
+    }
+  ],
+  "build": {
+    "content": [{"files": ["**/*.{md,yml}"], "exclude": ["_site/**"]}],
+    "resource": [{"files": ["images/**"]}],
+    "output": "_site",
+    "template": ["default", "modern", "templates/ja"],
+    "globalMetadata": {
+      "_appName": "PotisanWindowsLibraries",
+      "_appTitle": "PotisanWindowsLibraries",
+      "_enableSearch": true,
+      "pdf": false
+    }
+  }
+}

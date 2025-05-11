@@ -3,6 +3,16 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# docfx/api以下には絶対パスを含むファイルが作成されます。
+/docfx/_site/
+/docfx/api/
+/docs/
+
+Samples/ConsoleApp*/
+Samples/WinFormsApp*/
+memo/*
+memos/*
+
 # User-specific files
 *.rsuser
 *.suo
