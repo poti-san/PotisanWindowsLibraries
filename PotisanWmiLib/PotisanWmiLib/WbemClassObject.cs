@@ -8,7 +8,7 @@ namespace Potisan.Windows.Wmi;
 /// <summary>
 /// WMIクラスまたはインスタンス。
 /// </summary>
-public sealed class WbemClassObject : IDisposable
+public sealed class WbemClassObject : IWmiDisposable
 {
 	private IWbemClassObject? _obj;
 
@@ -23,12 +23,15 @@ public sealed class WbemClassObject : IDisposable
 		_obj = (IWbemClassObject)Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_WbemClassObject)!)!;
 	}
 
+	/// <inheritdoc/>
 	[NotNullIfNotNull(nameof(_obj))]
 	public object? WrappedObject => _obj;
 
+	/// <inheritdoc/>
 	[MemberNotNullWhen(false, nameof(_obj))]
 	public bool IsDisposed => _obj == null;
 
+	/// <inheritdoc/>
 	public void Dispose()
 	{
 		if (_obj == null) return;
@@ -37,6 +40,7 @@ public sealed class WbemClassObject : IDisposable
 		GC.SuppressFinalize(this);
 	}
 
+	/// <inheritdoc/>
 	[MemberNotNull(nameof(_obj))]
 	public void ThrowIfDisposed()
 	{

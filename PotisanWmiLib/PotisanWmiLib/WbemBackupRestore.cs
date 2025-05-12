@@ -5,7 +5,7 @@ namespace Potisan.Windows.Wmi;
 /// <summary>
 /// WMIリポジトリのバックアップと復元。
 /// </summary>
-public sealed class WbemBackupRestore : IDisposable
+public sealed class WbemBackupRestore : IWmiDisposable
 {
 	private IWbemBackupRestore? _obj;
 
@@ -14,18 +14,21 @@ public sealed class WbemBackupRestore : IDisposable
 		_obj = (IWbemBackupRestore)o;
 	}
 
+	/// <inheritdoc/>
 	public WbemBackupRestore()
 	{
 		Guid CLSID_WbemBackupRestore = new("C49E32C6-BC8B-11d2-85D4-00105A1F8304");
 		_obj = (IWbemBackupRestore)Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_WbemBackupRestore)!)!;
 	}
 
+	/// <inheritdoc/>
 	[NotNullIfNotNull(nameof(_obj))]
 	public object? WrappedObject => _obj;
 
 	[MemberNotNullWhen(false, nameof(_obj))]
 	public bool IsDisposed => _obj == null;
 
+	/// <inheritdoc/>
 	public void Dispose()
 	{
 		if (_obj == null) return;
@@ -34,6 +37,7 @@ public sealed class WbemBackupRestore : IDisposable
 		GC.SuppressFinalize(this);
 	}
 
+	/// <inheritdoc/>
 	[MemberNotNull(nameof(_obj))]
 	public void ThrowIfDisposed()
 	{

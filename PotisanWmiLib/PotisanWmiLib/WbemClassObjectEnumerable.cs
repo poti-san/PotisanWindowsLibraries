@@ -7,7 +7,7 @@ namespace Potisan.Windows.Wmi;
 /// <summary>
 /// WMIクラス列挙。
 /// </summary>
-public sealed class WbemClassObjectEnumerable : IDisposable, IEnumerable<WbemClassObject>
+public sealed class WbemClassObjectEnumerable : IWmiDisposable, IEnumerable<WbemClassObject>
 {
 	private IEnumWbemClassObject? _obj;
 	public ComAuthenticationLevel AuthenticationLevel { get; }
@@ -31,12 +31,15 @@ public sealed class WbemClassObjectEnumerable : IDisposable, IEnumerable<WbemCla
 		Timeout = timeout;
 	}
 
+	/// <inheritdoc/>
 	[NotNullIfNotNull(nameof(_obj))]
 	public object? WrappedObject => _obj;
 
+	/// <inheritdoc/>
 	[MemberNotNullWhen(false, nameof(_obj))]
 	public bool IsDisposed => _obj == null;
 
+	/// <inheritdoc/>
 	public void Dispose()
 	{
 		if (_obj == null) return;
@@ -45,6 +48,7 @@ public sealed class WbemClassObjectEnumerable : IDisposable, IEnumerable<WbemCla
 		GC.SuppressFinalize(this);
 	}
 
+	/// <inheritdoc/>
 	[MemberNotNull(nameof(_obj))]
 	public void ThrowIfDisposed()
 	{

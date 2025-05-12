@@ -24,7 +24,7 @@ internal interface IWbemServices
 
 	[PreserveSig]
 	int GetObject(
-		[MarshalAs(UnmanagedType.BStr)] string strObjectPath,
+		[MarshalAs(UnmanagedType.BStr)] string? strObjectPath,
 		int lFlags,
 		IWbemContext? pCtx,
 		out IWbemClassObject? ppObject,
@@ -32,7 +32,7 @@ internal interface IWbemServices
 
 	[PreserveSig]
 	int GetObjectAsync(
-		[MarshalAs(UnmanagedType.BStr)] string strObjectPath,
+		[MarshalAs(UnmanagedType.BStr)] string? strObjectPath,
 		int lFlags,
 		IWbemContext? pCtx,
 		IWbemObjectSink? pResponseHandler);

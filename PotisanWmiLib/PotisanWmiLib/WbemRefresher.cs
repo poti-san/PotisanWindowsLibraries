@@ -5,7 +5,7 @@ namespace Potisan.Windows.Wmi;
 /// <summary>
 /// WMI更新可能オブジェクトの更新機能。
 /// </summary>
-public sealed class WbemRefresher : IDisposable
+public sealed class WbemRefresher : IWmiDisposable
 {
 	private IWbemRefresher? _obj;
 
@@ -20,12 +20,15 @@ public sealed class WbemRefresher : IDisposable
 		_obj = (IWbemRefresher)Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_WbemRefresher)!)!;
 	}
 
+	/// <inheritdoc/>
 	[NotNullIfNotNull(nameof(_obj))]
 	public object? WrappedObject => _obj;
 
+	/// <inheritdoc/>
 	[MemberNotNullWhen(false, nameof(_obj))]
 	public bool IsDisposed => _obj == null;
 
+	/// <inheritdoc/>
 	public void Dispose()
 	{
 		if (_obj == null) return;
@@ -34,6 +37,7 @@ public sealed class WbemRefresher : IDisposable
 		GC.SuppressFinalize(this);
 	}
 
+	/// <inheritdoc/>
 	[MemberNotNull(nameof(_obj))]
 	public void ThrowIfDisposed()
 	{

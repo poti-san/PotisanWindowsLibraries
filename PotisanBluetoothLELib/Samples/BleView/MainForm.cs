@@ -64,7 +64,7 @@ internal partial class MainForm : Form
 
 		DeviceInfoTreeView.BeginUpdate();
 		var nodes = DeviceInfoTreeView.Nodes;
-		var deviceInfo = selectedNode.Tag as IBluetoothLEDeviceInfo;
+		var deviceInfo = (IBluetoothLEDeviceInfo)selectedNode.Tag!;
 		var device = default(IBluetoothLEDevice);
 		try
 		{
@@ -86,7 +86,7 @@ internal partial class MainForm : Form
 				nodes.AddRange([.. bleDevice.Services
 					.Select(static service =>
 					{
-						var serviceDeviceInfo = service.GetServiceDeviceInfo();
+						var serviceDeviceInfo = service.GetServiceDeviceInfo()!;
 						using var serviceDevice = serviceDeviceInfo.TryOpen();
 						var serviceEnabled = serviceDevice != null;
 						var serviceGuid = service.ServiceUuid.ToGuid().ToString("B");
@@ -99,7 +99,7 @@ internal partial class MainForm : Form
 			}
 			else
 			{
-				var serviceDevice = device as BluetoothLEGattServiceDevice;
+				var serviceDevice = (BluetoothLEGattServiceDevice)device;
 				AddServiceCharacteristicNodes(nodes, serviceDevice);
 			}
 		}

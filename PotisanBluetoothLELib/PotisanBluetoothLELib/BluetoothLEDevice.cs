@@ -12,7 +12,14 @@ namespace Potisan.Windows.BluetoothLE;
 /// </summary>
 public interface IBluetoothLEDevice : IDisposable
 {
+	/// <summary>
+	/// デバイスハンドル。実体はデバイスパスのファイルハンドルです。
+	/// </summary>
 	SafeHandle Handle { get; }
+
+	/// <summary>
+	/// デバイスインターフェイスGUID。
+	/// </summary>
 	Guid InterfaceGuid { get; }
 }
 
@@ -21,6 +28,7 @@ public interface IBluetoothLEDevice : IDisposable
 /// </summary>
 public abstract class BluetoothLEDeviceBase : IBluetoothLEDevice
 {
+	/// <inheritdoc/>
 	public abstract Guid InterfaceGuid { get; }
 
 	internal FileStream _file;
@@ -30,8 +38,10 @@ public abstract class BluetoothLEDeviceBase : IBluetoothLEDevice
 		_file = file;
 	}
 
+	/// <inheritdoc/>
 	public SafeHandle Handle => _file.SafeFileHandle;
 
+	/// <inheritdoc/>
 	public void Dispose()
 	{
 		_file.Dispose();
@@ -44,6 +54,7 @@ public abstract class BluetoothLEDeviceBase : IBluetoothLEDevice
 /// </summary>
 public sealed class BluetoothLEDevice : BluetoothLEDeviceBase
 {
+	/// <inheritdoc/>
 	public override Guid InterfaceGuid { get; }
 
 	internal BluetoothLEDevice(BluetoothLEDeviceInfo info)
@@ -52,6 +63,9 @@ public sealed class BluetoothLEDevice : BluetoothLEDeviceBase
 		InterfaceGuid = info.InterfaceGuid;
 	}
 
+	/// <summary>
+	/// デバイスで使用できる全てのプライマリサービスを取得します。
+	/// </summary>
 	public ImmutableArray<BluetoothLEGattServiceForDevice> Services
 	{
 		get
@@ -70,6 +84,13 @@ public sealed class BluetoothLEDevice : BluetoothLEDeviceBase
 		}
 	}
 
+	/// <summary>
+	/// UUIDを指定して単一のプライマリサービスを取得します。
+	/// </summary>
+	/// <param name="uuid">プライマリサービスのUUID。</param>
+	/// <remarks>
+	/// 対応するプライマリサービスが見つからないか複数存在する場合、このメソッドは失敗します。
+	/// </remarks>
 	public BluetoothLEGattServiceForDevice? GetSingleServiceByUuid(KnownServiceShortUuid uuid)
 	{
 		return Services.SingleOrDefault(service => service.ServiceUuid.ShortUuid is { } shortUuid && shortUuid == (ushort)uuid);
@@ -82,7 +103,14 @@ public sealed class BluetoothLEDevice : BluetoothLEDeviceBase
 /// </summary>
 public interface IBluetoothLEGattService
 {
+	/// <summary>
+	/// サービスデバイスハンドル。実体はデバイスパスのファイルハンドルです。
+	/// </summary>
 	SafeHandle Handle { get; }
+
+	/// <summary>
+	/// プロファイルの全ての特性を取得します。
+	/// </summary>
 	ImmutableArray<BluetoothLEGattCharacteristic> Characteristics { get; }
 }
 
@@ -91,22 +119,40 @@ public interface IBluetoothLEGattService
 /// </summary>
 public static class IBluetoothLEGattServiceExtensions
 {
+	/// <summary>
+	/// 信頼性の高い書き込みを開始します。
+	/// 完了後は適切に<see cref="EndReliableWrite(IBluetoothLEGattService, ulong)"/>または<see cref="AbortReliableWrite(IBluetoothLEGattService, ulong)"/>を呼び出してください。
+	/// </summary>
+	/// <param name="service">対象となるGATTサービス。</param>
 	public static ulong BeginReliableWrite(this IBluetoothLEGattService service)
 	{
 		Marshal.ThrowExceptionForHR(NativeMethods.BluetoothGATTBeginReliableWrite(service.Handle, out var ctx, 0));
 		return ctx;
 	}
 
+	/// <summary>
+	/// 信頼性の高い書き込みを終了します。
+	/// </summary>
+	/// <param name="service">対象となるGATTサービス。</param>
+	/// <param name="context">開始時の戻り値。</param>
 	public static void EndReliableWrite(this IBluetoothLEGattService service, ulong context)
 	{
 		Marshal.ThrowExceptionForHR(NativeMethods.BluetoothGATTEndReliableWrite(service.Handle, context, 0));
 	}
 
+	/// <summary>
+	/// 信頼性の高い書き込みを中断します。
+	/// </summary>
+	/// <param name="service">対象となるGATTサービス。</param>
+	/// <param name="context">開始時の戻り値。</param>
 	public static void AbortReliableWrite(this IBluetoothLEGattService service, ulong context)
 	{
 		Marshal.ThrowExceptionForHR(NativeMethods.BluetoothGATTAbortReliableWrite(service.Handle, context, 0));
 	}
 
+	/// <summary>
+	/// UUIDに対応する単一の特性を取得します。特性が存在しないか複数存在する場合、メソッドは失敗します。
+	/// </summary>
 	public static BluetoothLEGattCharacteristic? GetSingleCharacteristicByUuid(
 		this IBluetoothLEGattService service,
 		KnownCharacteristicsShortUuid uuid)
@@ -122,6 +168,7 @@ public static class IBluetoothLEGattServiceExtensions
 /// </summary>
 public sealed class BluetoothLEGattServiceDevice : BluetoothLEDeviceBase, IBluetoothLEGattService
 {
+	/// <inheritdoc/>
 	public override Guid InterfaceGuid { get; }
 
 	internal BluetoothLEGattServiceDevice(BluetoothLEGattServiceDeviceInfo info)
@@ -130,9 +177,13 @@ public sealed class BluetoothLEGattServiceDevice : BluetoothLEDeviceBase, IBluet
 		InterfaceGuid = info.InterfaceGuid;
 	}
 
+	/// <inheritdoc/>
 	public ImmutableArray<BluetoothLEGattCharacteristic> Characteristics
 		=> BluetoothLEGattServiceForDevice.GetCharacteristics(Handle, Unsafe.NullRef<BTH_LE_GATT_SERVICE>(), InterfaceGuid);
 
+	/// <summary>
+	/// サービスで使用可能な全てのサービスを取得します。
+	/// </summary>
 	public ImmutableArray<BluetoothLEGattServiceForDevice> IncludedServices
 		=> BluetoothLEGattServiceForDevice.GetIncludedServices(Handle, Unsafe.NullRef<BTH_LE_GATT_SERVICE>(), InterfaceGuid);
 }
@@ -143,8 +194,14 @@ public sealed class BluetoothLEGattServiceDevice : BluetoothLEDeviceBase, IBluet
 /// </summary>
 public class BluetoothLEGattServiceForDevice : IBluetoothLEGattService
 {
+	/// <inheritdoc/>
 	public SafeHandle Handle { get; }
+
 	private readonly BTH_LE_GATT_SERVICE _service;
+
+	/// <summary>
+	/// デバイスインターフェイスGUID。
+	/// </summary>
 	public Guid InterfaceGuid { get; }
 
 	internal BluetoothLEGattServiceForDevice(SafeHandle handle, in BTH_LE_GATT_SERVICE service, in Guid interfaceGuid)
@@ -154,7 +211,14 @@ public class BluetoothLEGattServiceForDevice : IBluetoothLEGattService
 		InterfaceGuid = interfaceGuid;
 	}
 
+	/// <summary>
+	/// BluetoothLE GATTサービスUUID。
+	/// </summary>
 	public BluetoothLEServiceUuid ServiceUuid => new(_service.ServiceUuid);
+
+	/// <summary>
+	/// 属性ハンドル。
+	/// </summary>
 	public ushort AttributeHandle => _service.AttributeHandle;
 
 	internal static ImmutableArray<BluetoothLEGattCharacteristic> GetCharacteristics(SafeHandle handle, in BTH_LE_GATT_SERVICE service, in Guid interfaceGuid)
@@ -175,6 +239,7 @@ public class BluetoothLEGattServiceForDevice : IBluetoothLEGattService
 		return ImmutableCollectionsMarshal.AsImmutableArray(results);
 	}
 
+	/// <inheritdoc/>
 	public ImmutableArray<BluetoothLEGattCharacteristic> Characteristics => GetCharacteristics(Handle, _service, _service.ServiceUuid.ToGuid());
 
 	internal static ImmutableArray<BluetoothLEGattServiceForDevice> GetIncludedServices(
@@ -199,8 +264,14 @@ public class BluetoothLEGattServiceForDevice : IBluetoothLEGattService
 		return [.. services];
 	}
 
+	/// <summary>
+	/// サービスで使用可能な全てのサービスを取得します。
+	/// </summary>
 	public ImmutableArray<BluetoothLEGattServiceForDevice> IncludedServices => GetIncludedServices(Handle, _service, InterfaceGuid);
 
+	/// <summary>
+	/// BluetoothLE GATTサービスデバイス情報を取得します。
+	/// </summary>
 	public BluetoothLEGattServiceDeviceInfo? GetServiceDeviceInfo()
 	{
 		return BluetoothLE.CreateGattServiceDeviceInfoForInterface(ServiceUuid.ToGuid(), presentItems: true);
@@ -208,12 +279,17 @@ public class BluetoothLEGattServiceForDevice : IBluetoothLEGattService
 }
 
 /// <summary>
-/// GATTプロファイルの特性。
+/// BluetoothLE GATTプロファイルの特性。
 /// </summary>
 public sealed class BluetoothLEGattCharacteristic
 {
 	private readonly SafeHandle _handle;
+
+	/// <summary>
+	/// BluetoothLE GATTプロファイルの所属するBluetoothLE GATTサービスのインターフェイスGUID。
+	/// </summary>
 	public Guid ServiceInterfaceId { get; }
+
 	internal readonly BTH_LE_GATT_CHARACTERISTIC _characteristic;
 
 	internal BluetoothLEGattCharacteristic(SafeHandle handle, in Guid serviceInterfaceId, in BTH_LE_GATT_CHARACTERISTIC characteristic)
@@ -223,19 +299,69 @@ public sealed class BluetoothLEGattCharacteristic
 		_characteristic = characteristic;
 	}
 
+	/// <summary>
+	/// サービスハンドル。
+	/// </summary>
 	public ushort ServiceHandle => _characteristic.ServiceHandle;
+
+	/// <summary>
+	/// 特性UUID。
+	/// </summary>
 	public BluetoothLECharacteristicUuid CharacteristicUuid => new(_characteristic.CharacteristicUuid);
+
+	/// <summary>
+	/// 属性ハンドル。
+	/// </summary>
 	public ushort AttributeHandle => _characteristic.AttributeHandle;
+
+	/// <summary>
+	/// 特性値ハンドル。
+	/// </summary>
 	public ushort CharacteristicValueHandle => _characteristic.CharacteristicValueHandle;
+
+	/// <summary>
+	/// ブロードキャスト可能。
+	/// </summary>
 	public bool IsBroadcastable => _characteristic.IsBroadcastable != 0;
+
+	/// <summary>
+	/// 読み取り可能。
+	/// </summary>
 	public bool IsReadable => _characteristic.IsReadable != 0;
+
+	/// <summary>
+	/// 書き込み可能。
+	/// </summary>
 	public bool IsWritable => _characteristic.IsWritable != 0;
+
+	/// <summary>
+	/// 応答なしで書き込み可能。
+	/// </summary>
 	public bool IsWritableWithoutResponse => _characteristic.IsWritableWithoutResponse != 0;
+
+	/// <summary>
+	/// 署名済み書き込み可能。
+	/// </summary>
 	public bool IsSignedWritable => _characteristic.IsWritable != 0;
+
+	/// <summary>
+	/// 通知可能。値はコールバック関数を介して返されます。
+	/// </summary>
 	public bool IsNotifiable => _characteristic.IsNotifiable != 0;
+
+	/// <summary>
+	/// 指示可能。値はコールバック関数を介して返されます。
+	/// </summary>
 	public bool IsIndicatable => _characteristic.IsIndicatable != 0;
+
+	/// <summary>
+	/// 拡張プロパティがあるか。
+	/// </summary>
 	public bool HasExtendedProperties => _characteristic.HasExtendedProperties != 0;
 
+	/// <summary>
+	/// 全ての特性記述子を取得します。
+	/// </summary>
 	public ImmutableArray<BluetoothLEGattDescriptor> Descriptors
 	{
 		get
@@ -258,6 +384,10 @@ public sealed class BluetoothLEGattCharacteristic
 		}
 	}
 
+	/// <summary>
+	/// 特性値を取得します。
+	/// </summary>
+	/// <param name="flags">取得方法。</param>
 	public byte[] GetValue(BluetoothLEGattFlag flags = BluetoothLEGattFlag.None)
 	{
 		if (!IsReadable)
@@ -288,6 +418,10 @@ public sealed class BluetoothLEGattCharacteristic
 		}
 	}
 
+	/// <summary>
+	/// 特性値を取得します。失敗時は<c>null</c>を返します。
+	/// </summary>
+	/// <param name="flags">取得方法。</param>
 	public byte[]? TryGetValue(BluetoothLEGattFlag flags = BluetoothLEGattFlag.None)
 	{
 		try
@@ -300,9 +434,24 @@ public sealed class BluetoothLEGattCharacteristic
 		}
 	}
 
+	/// <summary>
+	/// 既定の方法で特性値を取得します。
+	/// </summary>
 	public byte[] Value => GetValue();
+
+	/// <summary>
+	/// 既定の方法で特性値を取得します。失敗時は<c>null</c>を返します。
+	/// </summary>
 	public byte[]? ValueOrNull => TryGetValue();
 
+	/// <summary>
+	/// 特性値を設定します。
+	/// </summary>
+	/// <param name="value">新しい値。</param>
+	/// <param name="flags">設定方法。</param>
+	/// <param name="reliableWriteContext">信頼性の高い書き込みのコンテキスト。
+	/// <see cref="IBluetoothLEGattServiceExtensions.BeginReliableWrite(IBluetoothLEGattService)"/></param>の戻り値です。
+	/// <exception cref="InvalidOperationException"></exception>
 	public void SetValue(ReadOnlySpan<byte> value, BluetoothLEGattFlag flags = BluetoothLEGattFlag.None, ulong? reliableWriteContext = null)
 	{
 		if (!IsWritable)
@@ -318,6 +467,13 @@ public sealed class BluetoothLEGattCharacteristic
 			reliableWriteContext ?? Unsafe.NullRef<ulong>(), (uint)flags));
 	}
 
+	/// <summary>
+	/// 通知イベントのコールバック関数を登録します。
+	/// </summary>
+	/// <param name="eventType">イベントの種類。</param>
+	/// <param name="callback">コールバック関数。</param>
+	/// <param name="context">コールバック関数に渡される値。</param>
+	/// <exception cref="NotSupportedException">特性は通知非対応です。</exception>
 	public BluetoothLEGattEvent RegisterEvent(
 		BluetoothLEGattEventType eventType,
 		BluetoothLEGattEventCallback callback,
@@ -339,26 +495,58 @@ public sealed class BluetoothLEGattCharacteristic
 	}
 }
 
+/// <summary>
+/// 読み書きの方法。
+/// </summary>
 [Flags]
 public enum BluetoothLEGattFlag : uint
 {
+	/// <summary>
+	/// 特定のGATT要件はありません。
+	/// </summary>
 	None = 0x00000000,
+	/// <summary>
+	/// 暗号化された送信を要求します。
+	/// </summary>
 	ConnectionEncrypted = 0x00000001,
+	/// <summary>
+	/// 認証された送信を要求します。
+	/// </summary>
 	ConnectionAuthenticated = 0x00000002,
+	/// <summary>
+	/// 常にデバイスから直接読み取ります。
+	/// </summary>
 	ForceReadFromDevice = 0x00000004,
+	/// <summary>
+	/// 常にキャッシュから読み込みます。
+	/// </summary>
 	ForceReadFromCache = 0x00000008,
+	/// <summary>
+	/// 署名付きで書き込みます。
+	/// </summary>
 	SignedWrite = 0x00000010,
+	/// <summary>
+	/// 応答なしで書き込みます。
+	/// </summary>
 	WriteWithoutResponse = 0x00000020,
+	/// <summary>
+	/// 全て取得します。
+	/// </summary>
 	ReturnAll = 0x00000040,
 }
 
 /// <summary>
-/// GATTプロファイルの記述子。
+/// GATTプロファイルの特性記述子。
 /// </summary>
 public sealed class BluetoothLEGattDescriptor
 {
 	private readonly SafeHandle _handle;
+
+	/// <summary>
+	/// 特性記述子を含む特性。
+	/// </summary>
 	public BluetoothLEGattCharacteristic ParentCharacteristic { get; }
+
 	private readonly BTH_LE_GATT_DESCRIPTOR _descriptor;
 
 	internal BluetoothLEGattDescriptor(SafeHandle handle, BluetoothLEGattCharacteristic parentCharacteristic, in BTH_LE_GATT_DESCRIPTOR descriptor)
@@ -368,14 +556,35 @@ public sealed class BluetoothLEGattDescriptor
 		_descriptor = descriptor;
 	}
 
+	/// <summary>
+	/// サービスハンドル。
+	/// </summary>
 	public ushort ServiceHandle => _descriptor.ServiceHandle;
+
+	/// <summary>
+	/// 特性ハンドル。
+	/// </summary>
 	public ushort CharacteristicHandle => _descriptor.CharacteristicHandle;
+
+	/// <summary>
+	/// 記述子の種類。
+	/// </summary>
 	public BluetoothLEGattDescriptorType DescriptorType => _descriptor.DescriptorType;
-	public BluetoothLEUuid DescriptorUuid => new(_descriptor.DescriptorUuid);
+
+	/// <summary>
+	/// BluetoothLE GATT記述子UUID。
+	/// </summary>
+	public BluetoothLEDescriptorUuid DescriptorUuid => new(_descriptor.DescriptorUuid);
+
+	/// <summary>
+	/// 属性ハンドル。
+	/// </summary>
 	public ushort AttributeHandle => _descriptor.AttributeHandle;
 
-	// NOTE
-	// 動作確認環境がないため、動作未確認です。
+	/// <summary>
+	/// 特性記述子の値を取得します。
+	/// NOTE：動作確認環境がないため、動作未確認です。
+	/// </summary>
 	public BluetoothLEGattDescriptorValue GetValue(BluetoothLEGattFlag flags = BluetoothLEGattFlag.None)
 	{
 		using var interfaceHandle = BluetoothLE.OpenInterfaceHandle(ParentCharacteristic.ServiceInterfaceId, FileAccess.Read);
@@ -394,8 +603,10 @@ public sealed class BluetoothLEGattDescriptor
 		return new(buffer);
 	}
 
-	// NOTE
-	// 動作確認環境がないため、動作未確認です。
+	/// <summary>
+	/// 特性記述子の値を取得します。失敗時は<c>null</c>を返します。
+	/// NOTE：動作確認環境がないため、動作未確認です。
+	/// </summary>
 	public BluetoothLEGattDescriptorValue? TryGetValue(BluetoothLEGattFlag flags = BluetoothLEGattFlag.None)
 	{
 		try
@@ -408,9 +619,16 @@ public sealed class BluetoothLEGattDescriptor
 		}
 	}
 
-	// NOTE
-	// 取得に成功したことがないので動作未確認です。
+	/// <summary>
+	/// 既定の方法で特性記述子の値を取得します。
+	/// NOTE：動作確認環境がないため、動作未確認です。
+	/// </summary>
 	public BluetoothLEGattDescriptorValue Value => GetValue();
+
+	/// <summary>
+	/// 既定の方法で特性記述子の値を取得します。失敗時は<c>null</c>を返します。
+	/// NOTE：動作確認環境がないため、動作未確認です。
+	/// </summary>
 	public BluetoothLEGattDescriptorValue? ValueOrNull => TryGetValue();
 
 	// NOTE
@@ -419,8 +637,11 @@ public sealed class BluetoothLEGattDescriptor
 }
 
 /// <summary>
-/// GATTプロファイルの記述子値。
+/// GATTプロファイルの特性記述子値。
 /// </summary>
+/// <remarks>
+/// <c>BTH_LE_GATT_DESCRIPTOR_VALUE</c>構造体のラッパーです。
+/// </remarks>
 public sealed class BluetoothLEGattDescriptorValue
 {
 	private readonly byte[] _raw;
@@ -432,9 +653,18 @@ public sealed class BluetoothLEGattDescriptorValue
 		_value1 = MemoryMarshal.Cast<byte, BTH_LE_GATT_DESCRIPTOR_VALUE_1>(raw)[0];
 	}
 
+	/// <summary>
+	/// 特性拡張プロパティ型。
+	/// </summary>
 	public readonly struct CharacteristicExtendedPropertiesType
 	{
+		/// <summary>
+		/// 信頼性の高い書き込みが有効か。
+		/// </summary>
 		public readonly bool IsReliableWriteEnabled;
+		/// <summary>
+		/// 書き込み可能か。
+		/// </summary>
 		public readonly bool IsAuxiliariesWritable;
 
 		internal CharacteristicExtendedPropertiesType(BTH_LE_GATT_DESCRIPTOR_VALUE_1.CharacteristicExtendedPropertiesType x)
@@ -444,9 +674,19 @@ public sealed class BluetoothLEGattDescriptorValue
 		}
 	}
 
+	/// <summary>
+	/// クライアント特性構成型。
+	/// </summary>
 	public readonly struct ClientCharacteristicConfigurationType
 	{
+		/// <summary>
+		/// 通知を受け取るために特性が登録されているか。
+		/// </summary>
 		public readonly bool IsSubscribeToNotification;
+
+		/// <summary>
+		/// 表示を受け取るために特性が登録されているか。
+		/// </summary>
 		public readonly bool IsSubscribeToIndication;
 
 		internal ClientCharacteristicConfigurationType(BTH_LE_GATT_DESCRIPTOR_VALUE_1.ClientCharacteristicConfigurationType x)
@@ -456,8 +696,14 @@ public sealed class BluetoothLEGattDescriptorValue
 		}
 	}
 
+	/// <summary>
+	/// サーバー特性構成型。
+	/// </summary>
 	public readonly struct ServerCharacteristicConfigurationType
 	{
+		/// <summary>
+		/// ブロードキャスト可能か。
+		/// </summary>
 		public readonly bool IsBroadcast;
 
 		internal ServerCharacteristicConfigurationType(BTH_LE_GATT_DESCRIPTOR_VALUE_1.ServerCharacteristicConfigurationType x)
@@ -466,12 +712,30 @@ public sealed class BluetoothLEGattDescriptorValue
 		}
 	}
 
+	/// <summary>
+	/// 特性形式型。
+	/// </summary>
 	public readonly struct CharacteristicFormatType
 	{
+		/// <summary>
+		/// 形式。
+		/// </summary>
 		public readonly byte Format;
+		/// <summary>
+		/// 指数値。
+		/// </summary>
 		public readonly byte Exponent;
+		/// <summary>
+		/// 定義済みの単位。
+		/// </summary>
 		public readonly BluetoothLEUuid Unit;
+		/// <summary>
+		/// 定義済みの名前空間。
+		/// </summary>
 		public readonly byte NameSpace;
+		/// <summary>
+		/// 形式のUUID。
+		/// </summary>
 		public readonly BluetoothLEUuid Description;
 
 		internal CharacteristicFormatType(BTH_LE_GATT_DESCRIPTOR_VALUE_1.CharacteristicFormatType x)
@@ -484,25 +748,46 @@ public sealed class BluetoothLEGattDescriptorValue
 		}
 	}
 
+	/// <summary>
+	/// 特性記述子型。
+	/// </summary>
 	public BluetoothLEGattDescriptorType DescriptorType => _value1.DescriptorType;
+	/// <summary>
+	/// 特性記述子UUID。
+	/// </summary>
 	public BluetoothLEUuid DescriptorUuid => _value1.DescriptorUuid;
 
+	/// <summary>
+	/// 特性拡張プロパティ。
+	/// </summary>
 	public CharacteristicExtendedPropertiesType CharacteristicExtendedProperties
 		=> DescriptorType == BluetoothLEGattDescriptorType.CharacteristicExtendedProperties
 			? new(_value1.u.CharacteristicExtendedProperties) : throw new InvalidOperationException();
 
+	/// <summary>
+	/// クライアント特性構成。
+	/// </summary>
 	public ClientCharacteristicConfigurationType ClientCharacteristicConfiguration
 		=> DescriptorType == BluetoothLEGattDescriptorType.ClientCharacteristicConfiguration
 			? new(_value1.u.ClientCharacteristicConfiguration) : throw new InvalidOperationException();
 
+	/// <summary>
+	/// サーバー特性構成。
+	/// </summary>
 	public ServerCharacteristicConfigurationType ServerCharacteristicConfiguration
 		=> DescriptorType == BluetoothLEGattDescriptorType.ServerCharacteristicConfiguration
 			? new(_value1.u.ServerCharacteristicConfiguration) : throw new InvalidOperationException();
 
+	/// <summary>
+	/// 特性書式。
+	/// </summary>
 	public CharacteristicFormatType CharacteristicFormat
 		=> DescriptorType == BluetoothLEGattDescriptorType.CharacteristicFormat
 			? new(_value1.u.CharacteristicFormat) : throw new InvalidOperationException();
 
+	/// <summary>
+	/// 特性記述子値。
+	/// </summary>
 	public ReadOnlySpan<byte> Data => _raw.AsSpan(
 		(int)Marshal.OffsetOf<BTH_LE_GATT_DESCRIPTOR_VALUE_1>(nameof(BTH_LE_GATT_DESCRIPTOR_VALUE_1.Data1)),
 		(int)_value1.DataSize);
@@ -516,7 +801,14 @@ public sealed class BluetoothLEGattDescriptorValue
 /// </remarks>
 public sealed class BluetoothLEGattEvent
 {
+	/// <summary>
+	/// イベントハンドル。
+	/// </summary>
 	public nint EventHandle { get; }
+
+	/// <summary>
+	/// コールバック関数。
+	/// </summary>
 	public BluetoothLEGattEventCallback Callback { get; }
 
 	internal BluetoothLEGattEvent(nint eventHandle, BluetoothLEGattEventCallback callback)
@@ -525,6 +817,9 @@ public sealed class BluetoothLEGattEvent
 		Callback = callback;
 	}
 
+	/// <summary>
+	/// イベント通知を解除します。
+	/// </summary>
 	public void Unregister()
 	{
 		Marshal.ThrowExceptionForHR(NativeMethods.BluetoothGATTUnregisterEvent(EventHandle, 0));
@@ -640,13 +935,34 @@ file static class NativeMethods
 /// </summary>
 public enum BluetoothLEGattDescriptorType : uint
 {
+	/// <summary>
+	/// 特性拡張プロパティ。
+	/// </summary>
 	CharacteristicExtendedProperties,
+	/// <summary>
+	/// 特性ユーザー定義情報。
+	/// </summary>
 	CharacteristicUserDescription,
+	/// <summary>
+	/// クライアント特性構成。
+	/// </summary>
 	ClientCharacteristicConfiguration,
+	/// <summary>
+	/// サーバー特性構成。
+	/// </summary>
 	ServerCharacteristicConfiguration,
+	/// <summary>
+	/// 特性書式。
+	/// </summary>
 	CharacteristicFormat,
+	/// <summary>
+	/// 特性集計書式。
+	/// </summary>
 	CharacteristicAggregateFormat,
-	CustomDescriptor
+	/// <summary>
+	/// カスタム特性記述子。
+	/// </summary>
+	CustomDescriptor,
 }
 
 /// <summary>
@@ -657,12 +973,23 @@ public enum BluetoothLEGattDescriptorType : uint
 /// </remarks>
 public enum BluetoothLEGattEventType
 {
+	/// <summary>
+	/// 特性値の変更。
+	/// </summary>
 	CharacteristicValueChangedEvent,
 }
 
-// NOTE
-// eventOutParameterは本来構造体に変換して渡すべきです。
-// ただし、そもそもイベントを補足できないのでひとまず対応しません。
+/// <summary>
+/// BluetoothLE GATTイベント通知コールバック。
+/// </summary>
+/// <param name="eventType">イベントの種類。</param>
+/// <param name="eventOutParameter">イベント情報。</param>
+/// <param name="context">コールバック登録時のパラメーター。</param>
+/// <remarks>
+/// NOTE：
+/// eventOutParameterは本来構造体に変換して渡すべきです。
+/// ただし、そもそもイベントを補足できないのでひとまず対応しません。
+/// </remarks>
 [UnmanagedFunctionPointer(CallingConvention.Winapi)]
 public delegate void BluetoothLEGattEventCallback(
 	BluetoothLEGattEventType eventType,

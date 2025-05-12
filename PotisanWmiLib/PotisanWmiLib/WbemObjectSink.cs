@@ -5,7 +5,7 @@ namespace Potisan.Windows.Wmi;
 /// <summary>
 /// WMIの通知受信シンク。
 /// </summary>
-public class WbemObjectSink : IDisposable
+public class WbemObjectSink : IWmiDisposable
 {
 	private IWbemObjectSink? _obj;
 
@@ -14,12 +14,15 @@ public class WbemObjectSink : IDisposable
 		_obj = (IWbemObjectSink)o;
 	}
 
+	/// <inheritdoc/>
 	[NotNullIfNotNull(nameof(_obj))]
 	public object? WrappedObject => _obj;
 
+	/// <inheritdoc/>
 	[MemberNotNullWhen(false, nameof(_obj))]
 	public bool IsDisposed => _obj == null;
 
+	/// <inheritdoc/>
 	public void Dispose()
 	{
 		if (_obj == null) return;
@@ -28,6 +31,7 @@ public class WbemObjectSink : IDisposable
 		GC.SuppressFinalize(this);
 	}
 
+	/// <inheritdoc/>
 	[MemberNotNull(nameof(_obj))]
 	public void ThrowIfDisposed()
 	{

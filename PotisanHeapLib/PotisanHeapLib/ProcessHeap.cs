@@ -18,6 +18,9 @@ namespace Potisan.Windows.Memory.Heap;
 [DebuggerDisplay("{Handle}")]
 public sealed class ProcessHeap : IDisposable
 {
+	/// <summary>
+	/// プロセスヒープのネイティブハンドル。
+	/// </summary>
 	public SafeProcessHeapHandle Handle { get; }
 
 	/// <summary>
@@ -260,6 +263,9 @@ public sealed class ProcessHeap : IDisposable
 			_heap = heap;
 		}
 
+		/// <summary>
+		/// ヒープロックを解除します。
+		/// </summary>
 		public readonly void Dispose()
 		{
 			_heap.Unlock();
@@ -596,8 +602,14 @@ public sealed class SafeProcessHeapHandle : SafeHandle, IFormattable
 	}
 
 #pragma warning disable CA1305
+	/// <summary>
+	/// ハンドルを表す文字列を返します。
+	/// </summary>
 	public override string ToString() => handle.ToString();
 #pragma warning restore CA1305
+	/// <summary>
+	/// ハンドルを書式化した文字列を返します。
+	/// </summary>
 	public string ToString(string? format, IFormatProvider? formatProvider) => handle.ToString(format, formatProvider);
 }
 
@@ -672,26 +684,52 @@ public sealed class SafeProcessHeapPointer : SafeHandle, IFormattable
 		_heap = heap;
 	}
 
+	/// <inheritdoc/>
 	public override bool IsInvalid => handle == 0;
 
+	/// <inheritdoc/>
 	protected override bool ReleaseHandle()
 		=> _heap.DangerousFree(handle);
 
+	/// <summary>
+	/// プロセスヒープ内のメモリを再割り当てします。
+	/// </summary>
+	/// <param name="size">新しいサイズ。</param>
+	/// <param name="flags">再割り当て方法。</param>
+	/// <returns>自分自身。新しいメモリが割り当てられています。</returns>
 	public SafeProcessHeapPointer Realloc(nuint size, ProcessHeapAllocFlag flags = 0)
 	{
 		handle = _heap.DangerousRealloc(handle, size, flags);
 		return this;
 	}
 
+	/// <summary>
+	/// メモリのバイト数。
+	/// </summary>
 	public nint Size => _heap.DangerousSizeOf(handle);
+	/// <summary>
+	/// メモリのバイト数。明示的にシリアル化を無効化します。
+	/// </summary>
 	public nint SizeWithoutSerialize => _heap.DangerousSizeOf(handle, true);
 
+	/// <summary>
+	/// メモリが有効か。
+	/// </summary>
 	public bool IsValidated => _heap.DangerousValidate(handle);
+	/// <summary>
+	/// メモリが有効か。明示的にシリアル化を無効化します。
+	/// </summary>
 	public bool IsValidatedWithoutSerialize => _heap.DangerousValidate(handle, true);
 
 #pragma warning disable CA1305
+	/// <summary>
+	/// ハンドルを表す文字列。
+	/// </summary>
 	public override string ToString() => handle.ToString();
 #pragma warning restore CA1305
+	/// <summary>
+	/// ハンドルを書式化した文字列。
+	/// </summary>
 	public string ToString(string? format, IFormatProvider? formatProvider) => handle.ToString(format, formatProvider);
 }
 

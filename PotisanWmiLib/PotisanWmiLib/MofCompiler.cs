@@ -5,7 +5,7 @@ namespace Potisan.Windows.Wmi;
 /// <summary>
 /// マネージドオブジェクト形式(MOF)コンパイラ。
 /// </summary>
-public sealed class MofCompiler : IDisposable
+public sealed class MofCompiler : IWmiDisposable
 {
 	private IMofCompiler? _obj;
 
@@ -20,12 +20,15 @@ public sealed class MofCompiler : IDisposable
 		_obj = (IMofCompiler)Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_MofCompiler)!)!;
 	}
 
+	/// <inheritdoc/>
 	[NotNullIfNotNull(nameof(_obj))]
 	public object? WrappedObject => _obj;
 
+	/// <inheritdoc/>
 	[MemberNotNullWhen(false, nameof(_obj))]
 	public bool IsDisposed => _obj == null;
 
+	/// <inheritdoc/>
 	public void Dispose()
 	{
 		if (_obj == null) return;
@@ -34,6 +37,7 @@ public sealed class MofCompiler : IDisposable
 		GC.SuppressFinalize(this);
 	}
 
+	/// <inheritdoc/>
 	[MemberNotNull(nameof(_obj))]
 	public void ThrowIfDisposed()
 	{

@@ -7,7 +7,7 @@ namespace Potisan.Windows.Wmi;
 /// <summary>
 /// WMIクラスのテキスト表現。
 /// </summary>
-public sealed class WbemObjectTextSource : IDisposable
+public sealed class WbemObjectTextSource : IWmiDisposable
 {
 	private IWbemObjectTextSrc? _obj;
 
@@ -22,12 +22,15 @@ public sealed class WbemObjectTextSource : IDisposable
 		_obj = (IWbemObjectTextSrc)Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_WbemObjectTextSrc)!)!;
 	}
 
+	/// <inheritdoc/>
 	[NotNullIfNotNull(nameof(_obj))]
 	public object? WrappedObject => _obj;
 
+	/// <inheritdoc/>
 	[MemberNotNullWhen(false, nameof(_obj))]
 	public bool IsDisposed => _obj == null;
 
+	/// <inheritdoc/>
 	public void Dispose()
 	{
 		if (_obj == null) return;
@@ -36,6 +39,7 @@ public sealed class WbemObjectTextSource : IDisposable
 		GC.SuppressFinalize(this);
 	}
 
+	/// <inheritdoc/>
 	[MemberNotNull(nameof(_obj))]
 	public void ThrowIfDisposed()
 	{

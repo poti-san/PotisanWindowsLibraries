@@ -25,6 +25,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="BluetoothLEDevice.cs~RF632f9a.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="System.Runtime.InteropServices" />
   </ItemGroup>
 

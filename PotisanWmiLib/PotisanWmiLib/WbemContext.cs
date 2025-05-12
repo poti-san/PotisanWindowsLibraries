@@ -7,7 +7,7 @@ namespace Potisan.Windows.Wmi;
 /// <summary>
 /// WMIサービス呼び出し時の追加コンテキスト情報。
 /// </summary>
-public sealed class WbemContext : IDisposable
+public sealed class WbemContext : IWmiDisposable
 {
 	private IWbemContext? _obj;
 
@@ -22,12 +22,15 @@ public sealed class WbemContext : IDisposable
 		_obj = (IWbemContext)Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_WbemContext)!)!;
 	}
 
+	/// <inheritdoc/>
 	[NotNullIfNotNull(nameof(_obj))]
 	public object? WrappedObject => _obj;
 
+	/// <inheritdoc/>
 	[MemberNotNullWhen(false, nameof(_obj))]
 	public bool IsDisposed => _obj == null;
 
+	/// <inheritdoc/>
 	public void Dispose()
 	{
 		if (_obj == null) return;
@@ -36,6 +39,7 @@ public sealed class WbemContext : IDisposable
 		GC.SuppressFinalize(this);
 	}
 
+	/// <inheritdoc/>
 	[MemberNotNull(nameof(_obj))]
 	public void ThrowIfDisposed()
 	{

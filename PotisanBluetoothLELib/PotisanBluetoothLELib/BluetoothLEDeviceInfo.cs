@@ -9,16 +9,49 @@ namespace Potisan.Windows.BluetoothLE;
 /// </summary>
 public interface IBluetoothLEDeviceInfo
 {
+	/// <summary>
+	/// デバイスインターフェイスGUID。
+	/// </summary>
 	Guid InterfaceGuid { get; }
+
+	/// <summary>
+	/// デバイスクラスGUID。
+	/// </summary>
 	Guid ClassGuid { get; }
+
+	/// <summary>
+	/// デバイスインターフェイスの状態。
+	/// </summary>
 	DeviceInterfaceFlag InterfaceFlags { get; }
+
+	/// <summary>
+	/// デバイスインターフェイスのパス。
+	/// </summary>
 	string Path { get; }
 
+	/// <summary>
+	/// デバイスクラス名。
+	/// </summary>
 	string DeviceClassName { get; }
+
+	/// <summary>
+	/// デバイス名。
+	/// </summary>
 	string Name { get; }
+
+	/// <summary>
+	/// デバイスの表示名。
+	/// </summary>
 	string FriendlyName { get; }
 
+	/// <summary>
+	/// デバイスハンドルを開きます。
+	/// </summary>
 	IBluetoothLEDevice Open();
+
+	/// <summary>
+	/// デバイスハンドルを開きます。失敗時は<c>null</c>を返します。
+	/// </summary>
 	IBluetoothLEDevice? TryOpen();
 }
 
@@ -28,11 +61,31 @@ public interface IBluetoothLEDeviceInfo
 public abstract class BluetoothLEDeviceInfoBase<T>
 	where T : IBluetoothLEDeviceInfo
 {
+	/// <summary>
+	/// デバイス情報を含むコレクション。
+	/// </summary>
 	public BluetoothLEDeviceInfoCollectionBase<T> Owner { get; }
+
 	private readonly SP_DEVINFO_DATA _devinfo;
+
+	/// <summary>
+	/// デバイスインターフェイスGUID。
+	/// </summary>
 	public Guid InterfaceGuid { get; }
+
+	/// <summary>
+	/// デバイスクラスGUID。
+	/// </summary>
 	public Guid ClassGuid => _devinfo.ClassGuid;
+
+	/// <summary>
+	/// デバイスインターフェイスの状態。
+	/// </summary>
 	public DeviceInterfaceFlag InterfaceFlags { get; }
+
+	/// <summary>
+	/// デバイスインターフェイスのパス。
+	/// </summary>
 	public string Path { get; }
 
 	internal BluetoothLEDeviceInfoBase(BluetoothLEDeviceInfoCollectionBase<T> owner,
@@ -65,6 +118,9 @@ public abstract class BluetoothLEDeviceInfoBase<T>
 		return Encoding.Unicode.GetString(Data.AsSpan()[..^2]);
 	}
 
+	/// <summary>
+	/// デバイスクラス名。
+	/// </summary>
 	public string DeviceClassName
 	{
 		get
@@ -77,6 +133,9 @@ public abstract class BluetoothLEDeviceInfoBase<T>
 		}
 	}
 
+	/// <summary>
+	/// デバイス名。
+	/// </summary>
 	public string Name
 	{
 		get
@@ -86,6 +145,9 @@ public abstract class BluetoothLEDeviceInfoBase<T>
 		}
 	}
 
+	/// <summary>
+	/// デバイスの表示名。
+	/// </summary>
 	public string FriendlyName
 	{
 		get
@@ -111,7 +173,10 @@ public class BluetoothLEDeviceInfo : BluetoothLEDeviceInfoBase<BluetoothLEDevice
 	{
 	}
 
+	/// <inheritdoc cref="IBluetoothLEDeviceInfo.Open"/>
 	public BluetoothLEDevice Open() => new(this);
+
+	/// <inheritdoc cref="IBluetoothLEDeviceInfo.TryOpen"/>
 	public BluetoothLEDevice? TryOpen()
 	{
 		try
@@ -143,7 +208,10 @@ public class BluetoothLEGattServiceDeviceInfo : BluetoothLEDeviceInfoBase<Blueto
 	{
 	}
 
+	/// <inheritdoc cref="IBluetoothLEDeviceInfo.Open"/>
 	public BluetoothLEGattServiceDevice Open() => new(this);
+
+	/// <inheritdoc cref="IBluetoothLEDeviceInfo.TryOpen"/>
 	public BluetoothLEGattServiceDevice? TryOpen()
 	{
 		try

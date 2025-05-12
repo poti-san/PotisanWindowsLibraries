@@ -5,7 +5,7 @@ namespace Potisan.Windows.Wmi;
 /// <summary>
 /// 非同期コールバックのラップ機能。
 /// </summary>
-public sealed class WbemUnsecuredApartment : IDisposable
+public sealed class WbemUnsecuredApartment : IWmiDisposable
 {
 	private IWbemUnsecuredApartment? _obj;
 
@@ -20,12 +20,15 @@ public sealed class WbemUnsecuredApartment : IDisposable
 		_obj = (IWbemUnsecuredApartment)Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_UnsecuredApartment)!)!;
 	}
 
+	/// <inheritdoc/>
 	[NotNullIfNotNull(nameof(_obj))]
 	public object? WrappedObject => _obj;
 
+	/// <inheritdoc/>
 	[MemberNotNullWhen(false, nameof(_obj))]
 	public bool IsDisposed => _obj == null;
 
+	/// <inheritdoc/>
 	public void Dispose()
 	{
 		if (_obj == null) return;
@@ -34,6 +37,7 @@ public sealed class WbemUnsecuredApartment : IDisposable
 		GC.SuppressFinalize(this);
 	}
 
+	/// <inheritdoc/>
 	[MemberNotNull(nameof(_obj))]
 	public void ThrowIfDisposed()
 	{

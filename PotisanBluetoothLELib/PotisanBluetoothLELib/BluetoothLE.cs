@@ -61,6 +61,7 @@ public static class BluetoothLE
 	/// 通常は<see cref="CreateDeviceInfoCollection(Guid?, bool, bool, bool)"/>を使用します。
 	/// </summary>
 	/// <param name="classGuid">デバイスクラスGUID。</param>
+	/// <param name="interfaceGuid">インターフェイスGUID。省略時は<see cref="BluetoothLEDeviceInterfaceGuid"/>です。</param>
 	/// <param name="presentItems">存在するデバイスのみ含める。</param>
 	/// <param name="profileItems">プロファイルの登録されたデバイスのみ含める。</param>
 	/// <returns>新しいデバイス情報コレクション。</returns>
@@ -78,6 +79,7 @@ public static class BluetoothLE
 	/// 通常は<see cref="CreateGattServiceDeviceInfoCollection(Guid?, bool, bool, bool)"/>を使用します。
 	/// </summary>
 	/// <param name="classGuid">デバイスクラスGUID。</param>
+	/// <param name="interfaceGuid">インターフェイスGUID。省略時は<see cref="BluetoothLEGattServiceDeviceInterfaceGuid"/>です。</param>
 	/// <param name="presentItems">存在するデバイスのみ含める。</param>
 	/// <param name="profileItems">プロファイルの登録されたデバイスのみ含める。</param>
 	/// <returns>新しいデバイス情報コレクション。</returns>

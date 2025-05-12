@@ -5,7 +5,7 @@ namespace Potisan.Windows.Wmi;
 /// <summary>
 /// WMIエラーの情報取得機能。
 /// </summary>
-public sealed class WbemStatusCodeText : IDisposable
+public sealed class WbemStatusCodeText : IWmiDisposable
 {
 	private IWbemStatusCodeText? _obj;
 
@@ -15,12 +15,15 @@ public sealed class WbemStatusCodeText : IDisposable
 		_obj = (IWbemStatusCodeText)Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_WbemStatusCodeText)!)!;
 	}
 
+	/// <inheritdoc/>
 	[NotNullIfNotNull(nameof(_obj))]
 	public object? WrappedObject => _obj;
 
+	/// <inheritdoc/>
 	[MemberNotNullWhen(false, nameof(_obj))]
 	public bool IsDisposed => _obj == null;
 
+	/// <inheritdoc/>
 	public void Dispose()
 	{
 		if (_obj == null) return;
@@ -29,6 +32,7 @@ public sealed class WbemStatusCodeText : IDisposable
 		GC.SuppressFinalize(this);
 	}
 
+	/// <inheritdoc/>
 	[MemberNotNull(nameof(_obj))]
 	public void ThrowIfDisposed()
 	{

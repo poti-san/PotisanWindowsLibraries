@@ -1,5 +1,12 @@
-﻿namespace Potisan.Windows.BluetoothLE.KnownShortUuids;
+﻿// 16ビットUUIDの個別説明は公式ドキュメントに任せます。
+#pragma warning disable CS1591
 
+namespace Potisan.Windows.BluetoothLE.KnownShortUuids;
+
+/// <summary>
+/// 定義済みのBluetoothLEサービス16ビットUUID。
+/// 詳細はBluetoothLE公式ドキュメントを参照してください。
+/// </summary>
 public enum KnownServiceShortUuid : uint
 {
 	GAP = 0x1800,

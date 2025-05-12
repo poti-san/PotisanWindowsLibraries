@@ -162,17 +162,17 @@ public enum OleAuthenticationCap : uint
 	[Obsolete("後方互換性のために残されています。")]
 	AnyAuthority = 0x80,
 
-	[EditorBrowsable(EditorBrowsableState.Never)]
 	/// <summary>
 	/// Schannelサーバープリンシパル名をfullsic形式にします。
 	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	MakeFullsic = 0x100,
 
-	[EditorBrowsable(EditorBrowsableState.Never)]
 	/// <summary>
 	/// <c>CoInitializeSecurity</c>の呼び出しで使用された<c>OleAuthenticationCap</c>を使用します。
 	/// <c>IClientSecurity::SetBlanket</c>または<c>CoSetProxyBlanket</c>の呼び出しで使用されます。
 	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	Default = 0x800,
 
 	/// <summary>
@@ -181,36 +181,36 @@ public enum OleAuthenticationCap : uint
 	/// </summary>
 	SecureRefs = 0x2,
 
-	[EditorBrowsable(EditorBrowsableState.Never)]
 	/// <summary>
 	/// セキュリティデスクリプタは<c>IAccessControl</c>を指します。
 	/// <see cref="AppID"/>とどちらかだけ指定できます。
 	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	AccessControl = 0x4,
 
-	[EditorBrowsable(EditorBrowsableState.Never)]
 	/// <summary>
 	/// セキュリティデスクリプタはAppIDのGUIDを指します。
 	/// <see cref="AccessControl"/>とどちらかだけ指定できます。
 	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	AppID = 0x8,
 
-	[EditorBrowsable(EditorBrowsableState.Never)]
 	/// <summary>
 	/// システムの予約済みフラグ。
 	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	Dynamic = 0x10,
 
-	[EditorBrowsable(EditorBrowsableState.Never)]
 	/// <summary>
 	/// <c>SetProxyBlanket</c>でSchannelプリンシパル名にfullsic形式を要求します。
 	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	RequireFullsic = 0x200,
 
-	[EditorBrowsable(EditorBrowsableState.Never)]
 	/// <summary>
 	/// システムの予約済みフラグ。
 	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	AutoInpersonate = 0x400,
 
 	/// <summary>
@@ -225,9 +225,9 @@ public enum OleAuthenticationCap : uint
 	/// </summary>
 	NoCustomMarshal = 0x2000,
 
-	[EditorBrowsable(EditorBrowsableState.Never)]
 	/// <summary>
 	/// システムの予約済みフラグ。
 	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	Reserved1 = 0x4000
 }

@@ -8,7 +8,7 @@ namespace Potisan.Windows.Wmi;
 /// <summary>
 /// WMI修飾子セット。
 /// </summary>
-public class WbemQualifierSet : IDisposable
+public class WbemQualifierSet : IWmiDisposable
 {
 	private IWbemQualifierSet? _obj;
 
@@ -17,12 +17,15 @@ public class WbemQualifierSet : IDisposable
 		_obj = (IWbemQualifierSet)o;
 	}
 
+	/// <inheritdoc/>
 	[NotNullIfNotNull(nameof(_obj))]
 	public object? WrappedObject => _obj;
 
+	/// <inheritdoc/>
 	[MemberNotNullWhen(false, nameof(_obj))]
 	public bool IsDisposed => _obj == null;
 
+	/// <inheritdoc/>
 	public void Dispose()
 	{
 		if (_obj == null) return;
@@ -31,6 +34,7 @@ public class WbemQualifierSet : IDisposable
 		GC.SuppressFinalize(this);
 	}
 
+	/// <inheritdoc/>
 	[MemberNotNull(nameof(_obj))]
 	public void ThrowIfDisposed()
 	{

@@ -10,9 +10,22 @@ namespace Potisan.Windows.BluetoothLE;
 /// </summary>
 public interface IBluetoothLEDeviceCollection : IDisposable
 {
+	/// <summary>
+	/// BluetoothLE GATTデバイスまたはサービスデバイスコレクションハンドル。
+	/// </summary>
+	/// <remarks>
+	/// デバイス情報リストハンドルです。
+	/// </remarks>
 	SafeHandle Handle { get; }
+
+	/// <summary>
+	/// 全てのデバイス情報を取得します。
+	/// </summary>
 	ImmutableArray<IBluetoothLEDeviceInfo> Items { get; }
 
+	/// <summary>
+	/// デバイス情報の列挙可能オブジェクトを取得します。
+	/// </summary>
 	IEnumerable<IBluetoothLEDeviceInfo> GetDeviceInfoEnumerable();
 }
 
@@ -22,8 +35,19 @@ public interface IBluetoothLEDeviceCollection : IDisposable
 public abstract class BluetoothLEDeviceInfoCollectionBase<T> : IDisposable, IReadOnlyList<T>
 	where T : IBluetoothLEDeviceInfo
 {
+	/// <summary>
+	/// コレクション作成時のデバイスインターフェイスGUID。
+	/// </summary>
 	public Guid InterfaceGuid { get; }
+
+	/// <summary>
+	/// デバイス情報リストハンドル。
+	/// </summary>
 	public SafeHandle Handle { get; }
+
+	/// <summary>
+	/// 全てのデバイス情報を取得します。
+	/// </summary>
 	public ImmutableArray<T> Items { get; }
 
 	internal BluetoothLEDeviceInfoCollectionBase(in Guid classGuid, in Guid interfaceGuid, bool defaultItem, bool presentItems, bool profileItems, bool interfaceItems)
@@ -120,8 +144,14 @@ public class BluetoothLEDeviceInfoCollection :
 	}
 
 	ImmutableArray<IBluetoothLEDeviceInfo> IBluetoothLEDeviceCollection.Items => [.. Items.OfType<IBluetoothLEDeviceInfo>()];
+
+	/// <inheritdoc/>
 	public IEnumerable<IBluetoothLEDeviceInfo> GetDeviceInfoEnumerable() => Items.OfType<IBluetoothLEDeviceInfo>();
 
+	/// <summary>
+	/// BluetoothLE GATTサービスUUIDに対応するデバイス情報を取得します。
+	/// </summary>
+	/// <param name="uuid">BluetoothLE GATTサービスUUID。</param>
 	public ImmutableArray<BluetoothLEDeviceInfo> GetDeviceInfosByServiceUuid(KnownServiceShortUuid uuid)
 	{
 		var list = new List<BluetoothLEDeviceInfo>();
@@ -158,6 +188,8 @@ public class BluetoothLEGattServiceDeviceInfoCollection :
 	}
 
 	ImmutableArray<IBluetoothLEDeviceInfo> IBluetoothLEDeviceCollection.Items => [.. Items.OfType<IBluetoothLEDeviceInfo>()];
+
+	/// <inheritdoc/>
 	public IEnumerable<IBluetoothLEDeviceInfo> GetDeviceInfoEnumerable() => Items.OfType<IBluetoothLEDeviceInfo>();
 }
 
@@ -182,8 +214,17 @@ file static class NativeMethods
 [Flags]
 public enum DeviceInterfaceFlag : uint
 {
+	/// <summary>
+	/// インターフェイスはアクティブです。
+	/// </summary>
 	Active = 0x00000001,
+	/// <summary>
+	/// 既定のインターフェイスです。
+	/// </summary>
 	Default = 0x00000002,
+	/// <summary>
+	/// 削除済みのインターフェイスです。
+	/// </summary>
 	Removed = 0x00000004,
 }
 
