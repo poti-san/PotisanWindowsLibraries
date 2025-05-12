@@ -12,7 +12,7 @@ namespace Potisan.Windows.Memory.Heap;
 /// プロセスヒープ。
 /// </summary>
 /// <remarks>
-/// 既存のプロセスヒープ取得には<see cref="DefaultProcessHeap"/>、全プロセスヒープの取得には<see cref="ProcessHeaps"/>、
+/// 既定のプロセスヒープ取得には<see cref="DefaultProcessHeap"/>、全プロセスヒープの取得には<see cref="ProcessHeaps"/>、
 /// 新しいプロセスヒープの作成には<see cref="Create(nuint, nuint, Potisan.Windows.Memory.Heap.ProcessHeapAllocFlag)"/>を使用してください。
 /// </remarks>
 [DebuggerDisplay("{Handle}")]
