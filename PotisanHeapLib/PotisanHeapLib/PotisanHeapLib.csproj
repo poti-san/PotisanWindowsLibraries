@@ -12,6 +12,7 @@
     <AnalysisLevel>latest-recommended</AnalysisLevel>
 		<TieredCompilationQuickJit>false</TieredCompilationQuickJit>
 		<AssemblyVersion>1.0.0</AssemblyVersion>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

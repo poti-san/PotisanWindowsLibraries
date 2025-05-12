@@ -700,7 +700,16 @@ public sealed class SafeProcessHeapPointer : SafeHandle, IFormattable
 /// </summary>
 public enum ProcessHeapCompatibilityInfo
 {
+	/// <summary>
+	/// 標準ヒープです。ルックアサイドリストをサポートしません。
+	/// </summary>
 	StandardHeap = 0,
+	/// <summary>
+	/// ルックアサイドリストをサポートします。
+	/// </summary>
 	LookAsideLists = 1,
+	/// <summary>
+	/// 断片化の少ないヒープ (LFH)が有効です。
+	/// </summary>
 	LowFragmentationHeap = 2,
 }
